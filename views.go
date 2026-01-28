@@ -184,6 +184,8 @@ func issueHandler(service *IssueService) http.HandlerFunc {
 			})
 			return
 		}
+
+
 		render(w, "pages/issue", map[string]any{
 			"Issue": issue,
 		})
@@ -294,6 +296,8 @@ func apiRefreshHandler(service *IssueService) http.HandlerFunc {
 		if issue == nil {
 			return
 		}
+
+
 		render(w, "pages/issue", map[string]any{
 			"Issue":     issue,
 			"IsRefresh": true,

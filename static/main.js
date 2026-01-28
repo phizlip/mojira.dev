@@ -132,3 +132,77 @@ function nextImg() {
   const a = document.querySelector(`[data-attachment="${current}"]`)?.nextElementSibling
   showAttachment(a)
 }
+
+/* THEME MANAGEMENT */
+
+initTheme()
+
+function initTheme() {
+  const stored = localStorage.getItem('theme')
+  const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  const theme = stored === 'system' || !stored ? 'system' : stored
+
+  applyTheme(theme)
+
+  // Set cookie for server-side rendering
+  const actualTheme = theme === 'system' ? system : theme
+  document.cookie = `theme=${actualTheme}; path=/; max-age=31536000; SameSite=Lax`
+}
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+
+  // Update active class in dropdown
+  document.querySelectorAll('.theme-option').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-value') === theme)
+  })
+
+  updateThemeIcon(theme)
+}
+
+function setTheme(theme) {
+  localStorage.setItem('theme', theme)
+  applyTheme(theme)
+
+  // Set cookie for server-side rendering
+  const actualTheme = theme === 'system' 
+    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : theme
+  document.cookie = `theme=${actualTheme}; path=/; max-age=31536000; SameSite=Lax`
+
+  // Auto-close dropdown
+  const details = document.querySelector('.theme-dropdown')
+  if (details) {
+    details.removeAttribute('open')
+  }
+}
+
+function updateThemeIcon(theme) {
+  const option = document.querySelector(`.theme-option[data-value="${theme}"] svg`)
+  const toggle = document.querySelector('.theme-toggle')
+  if (option && toggle) {
+    toggle.innerHTML = option.outerHTML
+  }
+}
+
+// Close details when clicking outside
+document.addEventListener('click', (e) => {
+  const details = document.querySelector('.theme-dropdown')
+  if (details && details.hasAttribute('open') && !details.contains(e.target)) {
+    details.removeAttribute('open')
+  }
+})
+
+// Listen for system changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  if (!localStorage.getItem('theme') || localStorage.getItem('theme') === 'system') {
+    applyTheme('system')
+  }
+})
+
+// Initialize
+initTheme()
+
+// Expose to window for onclick handlers
+window.setTheme = setTheme
