@@ -99,8 +99,8 @@ func main() {
 		r.Get("/api/v1/issues/{key}", apiV1Issue(service))
 	})
 
-	log.Println("Starting server...")
-	log.Fatal(http.ListenAndServe("localhost:8080", r))
+	log.Println("Starting server on :8085...")
+	log.Fatal(http.ListenAndServe(":8085", r))
 }
 
 func KeyByCFConnectingIP(r *http.Request) (string, error) {

@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: mojira
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mojira_nightly
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
